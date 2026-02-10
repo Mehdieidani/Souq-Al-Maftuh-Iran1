@@ -3,333 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>السوق المفتوح + ایران</title>
+    <title>السوق المفتوح پلاس</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-        body { font-family: 'Vazirmatn', sans-serif; }
-        .vip-card { border: 3px solid #FFD700; background: linear-gradient(to bottom right, #fff, #fffde6); position: relative; }
-        .vip-badge { position: absolute; top: 10px; right: 10px; background-color: #FFD700; color: #8B4513; padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; }
-        .chat-bubble { max-width: 80%; border-radius: 15px; padding: 10px; margin: 5px; word-wrap: break-word; }
-        .chat-owner { background-color: #d1fae5; align-self: flex-end; } /* Green for owner */
-        .chat-other { background-color: #eff6ff; align-self: flex-start; } /* Blue for other */
-        .ad-image { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        .nav-active { color: #fbbf24 !important; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .page { display: none; animation: fadeIn 0.3s ease-in; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="pb-20">
 
-    <nav class="bg-blue-800 text-white p-4 shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="font-bold text-2xl">السوق المفتوح + <span class="text-yellow-400 text-lg">ایران</span></h1>
-            <div class="flex items-center gap-4">
-                <div id="userStatus" class="flex items-center text-sm">
-                    <span id="currentUserTier" class="bg-blue-600 px-3 py-1 rounded-full text-xs font-semibold">کاربر مهمان</span>
+    <header class="glass sticky top-0 z-50 p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold bg-gradient-to-l from-yellow-400 to-orange-500 bg-clip-text text-transparent">السوق المفتوح+</h1>
+        <div id="statusDot" class="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_10px_#22c55e]"></div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4">
+        
+        <section id="page-ads" class="page active">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">آگهی‌های اخیر</h2>
+                <button onclick="openAddModal()" class="bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm">ثبت آگهی</button>
+            </div>
+            <div id="adsList" class="grid gap-4">
                 </div>
-                <button onclick="openModal('addAdModal')" class="bg-yellow-500 text-blue-900 px-4 py-2 rounded-full font-bold shadow hover:bg-yellow-400 transition">
-                    <i class="fas fa-plus ml-2"></i>ثبت آگهی
-                </button>
-            </div>
-        </div>
-    </nav>
+        </section>
 
-    <main class="flex-grow max-w-7xl mx-auto p-4 py-8">
-        <div class="bg-gradient-to-r from-orange-400 to-red-500 p-5 rounded-xl mb-8 text-white flex flex-col md:flex-row justify-between items-center shadow-lg">
-            <div>
-                <h2 class="text-2xl font-bold mb-2">🔥 اشتراک ویژه بگیرید و آگهی نامحدود ثبت کنید!</h2>
-                <p class="text-sm">آگهی‌های شما تا ۱۰ برابر بیشتر دیده می‌شوند + چت و پشتیبانی هوشمند.</p>
+        <section id="page-chats" class="page">
+            <h2 class="text-2xl font-bold mb-4">گفتگوها</h2>
+            <div class="bg-slate-800 rounded-xl p-10 text-center text-gray-500">
+                <i class="fas fa-comments text-5xl mb-4"></i>
+                <p>هنوز پیامی ندارید</p>
             </div>
-            <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
-                <button onclick="openSubscriptionModal('1month')" class="bg-white text-orange-700 px-5 py-2 rounded-lg font-bold shadow-md hover:bg-gray-100 transition">۱ ماهه</button>
-                <button onclick="openSubscriptionModal('3month')" class="bg-white text-orange-700 px-5 py-2 rounded-lg font-bold shadow-md hover:bg-gray-100 transition">۳ ماهه</button>
-                <button onclick="openSubscriptionModal('6month')" class="bg-white text-orange-700 px-5 py-2 rounded-lg font-bold shadow-md hover:bg-gray-100 transition">۶ ماهه</button>
-                <button onclick="openSubscriptionModal('12month')" class="bg-white text-orange-700 px-5 py-2 rounded-lg font-bold shadow-md hover:bg-gray-100 transition">۱۲ ماهه</button>
-            </div>
-        </div>
+        </section>
 
-        <div id="adsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <p class="col-span-full text-center text-gray-500 animate-pulse">در حال بارگذاری آگهی‌ها...</p>
-        </div>
+        <section id="page-profile" class="page">
+            <h2 class="text-2xl font-bold mb-6">حساب کاربری</h2>
+            <div class="glass rounded-2xl p-6 mb-4 flex items-center gap-4">
+                <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-2xl text-black">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <p class="font-bold">مهدی عیدانی</p>
+                    <p class="text-sm text-yellow-500">کاربر ویژه (VIP)</p>
+                </div>
+            </div>
+            <div class="grid gap-2">
+                <div class="glass p-4 rounded-xl flex justify-between italic text-sm">
+                    <span>اعتبار تا:</span>
+                    <span>۱۴۰۵/۰۵/۲۰</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-support" class="page">
+            <h2 class="text-2xl font-bold mb-6">پشتیبانی و تماس</h2>
+            <div class="glass rounded-2xl p-6 space-y-6">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-phone-alt text-green-500 text-xl"></i>
+                    <div>
+                        <p class="text-sm text-gray-400">شماره تماس مستقیم</p>
+                        <a href="tel:+989332356547" class="text-lg font-bold">+98 933 235 6547</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-envelope text-blue-500 text-xl"></i>
+                    <div>
+                        <p class="text-sm text-gray-400">ایمیل پشتیبانی</p>
+                        <a href="mailto:mehdi1eidani@gmail.com" class="text-lg font-bold">mehdi1eidani@gmail.com</a>
+                    </div>
+                </div>
+                <hr class="border-gray-700">
+                <button class="w-full bg-blue-600 p-4 rounded-xl font-bold">چت هوشمند با هوش مصنوعی</button>
+            </div>
+        </section>
+
+        <section id="page-settings" class="page">
+            <h2 class="text-2xl font-bold mb-6">تنظیمات</h2>
+            <div class="space-y-2">
+                <div class="glass p-4 rounded-xl flex justify-between items-center">
+                    <span>اعلان‌های چت</span>
+                    <div class="w-10 h-5 bg-green-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-0.5"></div></div>
+                </div>
+                <div class="glass p-4 rounded-xl text-red-400 text-center mt-10">خروج از حساب</div>
+            </div>
+        </section>
+
     </main>
 
-    <div id="addAdModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] hidden">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl">
-            <h2 class="text-2xl font-bold mb-5 text-gray-800">ثبت آگهی جدید</h2>
-            <input type="text" id="adTitle" placeholder="عنوان آگهی (مثلاً: گوشی آیفون 15 پرومکس)" class="w-full border border-gray-300 p-3 rounded-lg mb-3 focus:ring-blue-500 focus:border-blue-500">
-            <input type="number" id="adPrice" placeholder="قیمت (تومان)" class="w-full border border-gray-300 p-3 rounded-lg mb-3 focus:ring-blue-500 focus:border-blue-500">
-            <textarea id="adDescription" placeholder="توضیحات کامل آگهی..." rows="4" class="w-full border border-gray-300 p-3 rounded-lg mb-3 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
-            <input type="file" id="adImage" accept="image/*" class="w-full border border-gray-300 p-3 rounded-lg mb-3">
-            
-            <div class="mb-4">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" id="isVipAd" class="form-checkbox h-5 w-5 text-yellow-500 rounded focus:ring-yellow-500">
-                    <span class="ml-2 text-gray-700 font-medium">آگهی ویژه (VIP)</span>
-                </label>
-                <p class="text-sm text-gray-500 mt-1">آگهی‌های ویژه تا ۷ روز در صدر نمایش داده می‌شوند. (هزینه جداگانه)</p>
-            </div>
-
-            <div class="flex gap-3 justify-end">
-                <button onclick="closeModal('addAdModal')" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium hover:bg-gray-400 transition">انصراف</button>
-                <button onclick="submitAdHandler()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition">ثبت آگهی</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="adDetailsModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[110] hidden">
-        <div class="bg-white rounded-xl max-w-4xl w-full flex flex-col h-[90vh] shadow-2xl overflow-hidden">
-            <div id="detailsContent" class="flex-grow overflow-y-auto p-6 pb-2">
-                </div>
-            <div class="p-4 border-t border-gray-200 bg-gray-50">
-                <h3 class="font-bold text-lg mb-3 text-gray-800">✉️ چت زنده با فروشنده (ترجمه خودکار)</h3>
-                <div id="chatBox" class="h-48 overflow-y-auto bg-white border border-gray-300 p-3 mb-3 rounded-lg shadow-inner flex flex-col gap-2">
-                    <p class="text-gray-400 text-center text-sm">شروع مکالمه...</p>
-                </div>
-                <div class="flex gap-3">
-                    <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." class="flex-grow border border-gray-300 p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                    <button onclick="sendMessage()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow hover:bg-blue-700 transition">
-                        <i class="fas fa-paper-plane"></i> ارسال
-                    </button>
-                </div>
-            </div>
-            <button onclick="closeModal('adDetailsModal')" class="w-full bg-gray-200 text-gray-700 py-3 font-bold hover:bg-gray-300 transition">بستن</button>
-        </div>
-    </div>
-
-    <div id="subscriptionModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] hidden">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl text-center">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">خرید اشتراک ویژه</h2>
-            <p class="mb-4 text-gray-600">برای فعالسازی اشتراک، مبلغ را به شماره کارت زیر واریز و رسید را در چت پشتیبانی (یا با ایمیل) ارسال کنید. بعد از تایید توسط مدیریت، حساب شما فعال می‌شود.</p>
-            
-            <div class="bg-blue-50 p-4 rounded-lg mb-5 border border-blue-200">
-                <p class="font-bold text-blue-800 mb-2">شماره کارت: <span class="text-2xl text-blue-600">۶۱۰۴-۳۳۷۸-۹۰۰۱-۲۳۴۵</span></p>
-                <p class="text-gray-700">نام صاحب حساب: مهدی عیدانی</p>
-                <p class="text-sm text-gray-500 mt-2">توجه: مبلغ دقیق برای هر دوره (۱، ۳، ۶ یا ۱۲ ماهه) را از پشتیبانی بپرسید.</p>
-            </div>
-            
-            <button onclick="closeModal('subscriptionModal')" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition">متوجه شدم</button>
-        </div>
-    </div>
+    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/10 px-6 py-3 flex justify-between items-center z-50">
+        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 text-gray-400 nav-active">
+            <i class="fas fa-th-large text-xl"></i>
+            <span class="text-[10px]">آگهی‌ها</span>
+        </button>
+        <button onclick="switchPage('chats', this)" class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-comment-dots text-xl"></i>
+            <span class="text-[10px]">چت</span>
+        </button>
+        <button onclick="switchPage('profile', this)" class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-[10px]">منو</span>
+        </button>
+        <button onclick="switchPage('support', this)" class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-headset text-xl"></i>
+            <span class="text-[10px]">پشتیبانی</span>
+        </button>
+        <button onclick="switchPage('settings', this)" class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-cog text-xl"></i>
+            <span class="text-[10px]">تنظیمات</span>
+        </button>
+    </nav>
 
     <script type="module">
-        import { db, ref, onValue, push, update, get, generateUserId, isVipExpired, saveAdToDB, updateUserAdCount, autoTranslate } from "./app.js";
+        import { db, ref, onValue } from "./app.js";
 
-        // --- Global State ---
-        let currentUserId = generateUserId();
-        let currentUser = { id: currentUserId, tier: "free", adCount: 0, vipExpires: 0 };
-        let activeChatAdId = null; // Which ad's chat is currently open
-
-        // --- UI Helper Functions ---
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        window.openModal = openModal; // Make accessible globally
-        window.closeModal = closeModal; // Make accessible globally
-
-        // --- User State Management ---
-        onValue(ref(db, `users/${currentUserId}`), (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                currentUser = { ...currentUser, ...data };
-                if (isVipExpired(currentUser)) {
-                    currentUser.tier = 'free';
-                    update(ref(db, `users/${currentUserId}`), { tier: 'free' }); // Update in DB if expired
-                }
-            } else {
-                // Initialize new user in DB if not exists
-                push(ref(db, `users/${currentUserId}`), { tier: "free", adCount: 0, createdAt: Date.now() });
-            }
-            updateUserUI();
-        });
-
-        function updateUserUI() {
-            const userTierElement = document.getElementById('currentUserTier');
-            if (currentUser.tier === 'vip') {
-                userTierElement.textContent = 'کاربر ویژه (VIP)';
-                userTierElement.className = 'bg-yellow-500 text-red-900 px-3 py-1 rounded-full text-xs font-semibold';
-            } else {
-                userTierElement.textContent = `کاربر عادی ( ${2 - currentUser.adCount} آگهی باقی‌مانده)`;
-                userTierElement.className = 'bg-blue-600 px-3 py-1 rounded-full text-xs font-semibold';
-            }
-        }
-
-        // --- Ad Submission Handler ---
-        window.submitAdHandler = async () => {
-            const title = document.getElementById('adTitle').value;
-            const price = document.getElementById('adPrice').value;
-            const description = document.getElementById('adDescription').value;
-            const imageFile = document.getElementById('adImage').files[0];
-            const isVip = document.getElementById('isVipAd').checked;
-
-            if (!title || !price) { alert("عنوان و قیمت آگهی الزامی است!"); return; }
-
-            if (currentUser.tier === 'free' && currentUser.adCount >= 2 && !isVip) {
-                alert("❌ شما به عنوان کاربر عادی، فقط ۲ آگهی رایگان در ماه می‌توانید ثبت کنید. برای ثبت آگهی‌های بیشتر یا آگهی ویژه، لطفاً اشتراک VIP تهیه کنید.");
-                return;
-            }
-
-            const adData = {
-                title, price, description,
-                status: 'pending', // Awaiting admin approval
-                type: isVip ? 'vip' : 'normal',
-                ownerId: currentUserId,
-                createdAt: Date.now(),
-                vipExpiresAt: isVip ? Date.now() + (7 * 24 * 60 * 60 * 1000) : 0 // 7 days VIP
-            };
-
-            await saveAdToDB(adData, imageFile);
-            await updateUserAdCount(currentUserId);
-
-            alert("✅ آگهی شما با موفقیت ثبت و منتظر تایید مدیریت است.");
-            closeModal('addAdModal');
-            // Clear form
-            document.getElementById('adTitle').value = '';
-            document.getElementById('adPrice').value = '';
-            document.getElementById('adDescription').value = '';
-            document.getElementById('adImage').value = '';
-            document.getElementById('isVipAd').checked = false;
+        // تابع تغییر صفحه
+        window.switchPage = function(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('nav-active'));
+            el.classList.add('nav-active');
         };
 
-        // --- Display Ads ---
-        onValue(ref(db, 'ads'), (snapshot) => {
-            const adsList = document.getElementById('adsList');
-            adsList.innerHTML = '';
-            const adsData = snapshot.val();
-            let adsArray = [];
-            for (let id in adsData) {
-                adsArray.push({ id, ...adsData[id] });
-            }
-
-            // Sort: VIP ads first, then by creation date (newest first)
-            adsArray.sort((a, b) => {
-                if (a.type === 'vip' && b.type !== 'vip') return -1;
-                if (a.type !== 'vip' && b.type === 'vip') return 1;
-                return b.createdAt - a.createdAt;
-            });
-
-            if (adsArray.length === 0) {
-                adsList.innerHTML = '<p class="col-span-full text-center text-gray-500">هنوز آگهی ثبت نشده است.</p>';
-                return;
-            }
-
-            adsArray.forEach(ad => {
-                if (ad.status === 'approved') {
-                    const adCard = document.createElement('div');
-                    adCard.className = `bg-white p-4 rounded-xl shadow-md cursor-pointer hover:shadow-lg transition ${ad.type === 'vip' ? 'vip-card' : ''}`;
-                    adCard.onclick = () => showAdDetails(ad.id);
-                    adCard.innerHTML = `
-                        ${ad.type === 'vip' ? '<span class="vip-badge">ویژه</span>' : ''}
-                        <img src="${ad.imageUrl || 'https://via.placeholder.com/300x180?text=بدون+عکس'}" alt="${ad.title}" class="ad-image mb-3">
-                        <h3 class="font-bold text-lg mb-1">${ad.title}</h3>
-                        <p class="text-blue-600 font-bold text-xl mb-2">${Number(ad.price).toLocaleString()} تومان</p>
-                        <p class="text-gray-600 text-sm line-clamp-2">${ad.description || 'توضیحات موجود نیست.'}</p>
-                        <div class="mt-4 flex justify-between items-center text-xs text-gray-400">
-                            <span><i class="fas fa-clock ml-1"></i>${new Date(ad.createdAt).toLocaleDateString('fa-IR')}</span>
-                            <button onclick="event.stopPropagation(); toggleBookmark('${ad.id}')" class="text-gray-400 hover:text-red-500 transition">
-                                <i id="bookmark-${ad.id}" class="far fa-heart"></i>
-                            </button>
+        // لود آگهی‌ها در تم تاریک
+        onValue(ref(db, 'ads'), (snap) => {
+            const list = document.getElementById('adsList');
+            list.innerHTML = '';
+            const data = snap.val();
+            for(let id in data) {
+                if(data[id].status === 'approved') {
+                    list.innerHTML += `
+                        <div class="glass p-3 rounded-2xl flex gap-4">
+                            <div class="w-24 h-24 bg-slate-700 rounded-xl overflow-hidden">
+                                <img src="${data[id].imageUrl || ''}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 flex flex-col justify-between">
+                                <h3 class="font-bold text-white">${data[id].title}</h3>
+                                <p class="text-yellow-500 font-bold">${Number(data[id].price).toLocaleString()} تومان</p>
+                            </div>
                         </div>
                     `;
-                    adsList.appendChild(adCard);
                 }
-            });
-        });
-
-        // --- Ad Details & Chat ---
-        window.showAdDetails = async (adId) => {
-            const adSnap = await get(ref(db, `ads/${adId}`));
-            const ad = adSnap.val();
-            if (!ad) return;
-
-            activeChatAdId = adId; // Set active chat ad
-            const detailsContent = document.getElementById('detailsContent');
-            detailsContent.innerHTML = `
-                <img src="${ad.imageUrl || 'https://via.placeholder.com/600x400?text=بدون+عکس'}" alt="${ad.title}" class="w-full h-64 object-cover rounded-lg mb-4">
-                <h2 class="text-3xl font-bold mb-3 text-gray-900">${ad.title}</h2>
-                <p class="text-green-600 font-bold text-3xl mb-4">${Number(ad.price).toLocaleString()} تومان</p>
-                <p class="text-gray-700 text-lg leading-relaxed mb-6">${ad.description || 'توضیحات کامل‌تری برای این آگهی موجود نیست.'}</p>
-                <div class="flex items-center text-gray-500 text-sm mb-2">
-                    <i class="fas fa-clock ml-2"></i><span>تاریخ ثبت: ${new Date(ad.createdAt).toLocaleDateString('fa-IR')}</span>
-                </div>
-                <div class="flex items-center text-gray-500 text-sm mb-6">
-                    <i class="fas fa-user ml-2"></i><span>شناسه آگهی‌دهنده: ${ad.ownerId}</span>
-                </div>
-                <hr class="mb-4">
-            `;
-            openModal('adDetailsModal');
-            loadChatMessages(adId);
-        };
-
-        window.loadChatMessages = (adId) => {
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = '<p class="text-gray-400 text-center text-sm">شروع مکالمه...</p>'; // Clear and show loading
-            onValue(ref(db, `chats/${adId}`), async (snapshot) => {
-                chatBox.innerHTML = ''; // Clear for new messages
-                const messages = snapshot.val();
-                if (messages) {
-                    for (let msgId in messages) {
-                        const msg = messages[msgId];
-                        const bubble = document.createElement('div');
-                        const isOwner = msg.sender === currentUserId;
-                        bubble.className = `chat-bubble text-sm ${isOwner ? 'chat-owner self-end' : 'chat-other self-start'}`;
-                        
-                        // Display translated text if available, otherwise original
-                        let displayTxt = msg.text;
-                        if (msg.translatedText && msg.translatedText !== msg.text) {
-                            displayTxt = `(${msg.text}) ${msg.translatedText}`;
-                        }
-                        
-                        bubble.innerHTML = `
-                            <p class="font-medium">${displayTxt}</p>
-                            <span class="text-xs text-gray-500 mt-1 block">${new Date(msg.timestamp).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}</span>
-                        `;
-                        chatBox.appendChild(bubble);
-                    }
-                }
-                chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
-            });
-        };
-
-        window.sendMessage = async () => {
-            const chatInput = document.getElementById('chatInput');
-            const msg = chatInput.value.trim();
-            if (!msg || !activeChatAdId) return;
-
-            chatInput.value = ''; // Clear input immediately
-
-            const translatedText = await autoTranslate(msg, 'en'); // Translate to English for example, then display both
-            
-            push(ref(db, `chats/${activeChatAdId}`), {
-                sender: currentUserId,
-                text: msg,
-                translatedText: translatedText,
-                timestamp: Date.now()
-            });
-        };
-
-        // --- Bookmark Ad ---
-        window.toggleBookmark = (adId) => {
-            const bookmarkIcon = document.getElementById(`bookmark-${adId}`);
-            if (bookmarkIcon.classList.contains('far')) { // Not bookmarked
-                bookmarkIcon.classList.remove('far');
-                bookmarkIcon.classList.add('fas');
-                bookmarkIcon.classList.add('text-red-500');
-                push(ref(db, `users/${currentUserId}/bookmarks`), adId);
-                alert('آگهی نشان شد!');
-            } else { // Bookmarked
-                bookmarkIcon.classList.remove('fas');
-                bookmarkIcon.classList.remove('text-red-500');
-                bookmarkIcon.classList.add('far');
-                // TODO: Remove from bookmarks in DB (more complex, requires searching)
-                alert('آگهی از نشان خارج شد!');
             }
-        };
-        
-        // --- Subscription Modal ---
-        window.openSubscriptionModal = (duration) => {
-            // Here you might show different pricing based on duration
-            // For now, just show the generic payment modal
-            openModal('subscriptionModal');
-        };
-
+        });
     </script>
 </body>
 </html>
