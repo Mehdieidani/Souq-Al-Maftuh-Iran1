@@ -6,185 +6,77 @@
     <title>السوق المفتوح پلاس | ایران</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap');
-        body { font-family: 'Vazirmatn', sans-serif; transition: all 0.4s ease; overflow-x: hidden; }
-        .dark-mode { background-color: #020617; color: #f8fafc; }
-        .light-mode { background-color: #f1f5f9; color: #0f172a; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
-        .page { display: none; animation: slideUp 0.4s ease-out; }
-        .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .hero-banner { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.05)); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 25px; }
-        .nav-active { color: #fbbf24 !important; transform: translateY(-3px); }
-    </style>
 </head>
-<body class="dark-mode pb-24">
+<body class="dark bg-slate-900 text-slate-100">
 
-    <div id="auth-overlay" class="fixed inset-0 z-[100] glass flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-white/10 p-8 rounded-[35px] w-full max-w-sm shadow-2xl">
-            <h2 class="text-2xl font-bold mb-2 text-center text-yellow-500">خوش آمدید</h2>
-            <p class="text-gray-400 text-xs text-center mb-6">برای استفاده از خدمات لطفا وارد شوید</p>
-            <div class="space-y-4">
-                <input type="text" id="auth-id" placeholder="ایمیل یا شماره تلفن" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500">
-                <input type="password" id="auth-pass" placeholder="رمز عبور قوی" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500">
-                <button onclick="handleAuth()" class="w-full bg-yellow-500 text-black font-bold py-4 rounded-2xl shadow-lg shadow-yellow-500/20">ورود / ثبت‌نام</button>
-            </div>
-        </div>
-    </div>
+<main class="max-w-3xl mx-auto p-6 space-y-10">
 
-    <header class="glass sticky top-0 z-50 p-4 flex justify-between items-center backdrop-blur-xl">
-        <div class="flex gap-2">
-            <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
-                <i id="themeIcon" class="fas fa-sun text-yellow-400"></i>
-            </button>
-            <select onchange="changeLang(this.value)" class="bg-white/5 border-none text-[10px] rounded-xl px-2 outline-none">
-                <option value="fa">فارسی</option>
-                <option value="ar">العربية</option>
-            </select>
-        </div>
-        <h1 class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">السوق المفتوح+</h1>
-    </header>
+<!-- معرفی پلتفرم -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h1 class="text-2xl font-bold text-yellow-400 mb-4">السوق المفتوح + ایران</h1>
+<p class="leading-relaxed text-sm text-slate-300">
+پلتفرم «السوق المفتوح + ایران» یک بازار آنلاین دو‌زبانه (فارسی – عربی) است که به‌عنوان پل ارتباطی میان کاربران ایران و کشورهای عربی طراحی شده است. این پلتفرم امکان خرید، فروش، خدمات، اشتغال، پزشکی، زیارتی و گردشگری را در بستری امن، ساده و هوشمند فراهم می‌کند.
+</p>
+</section>
 
-    <main class="max-w-md mx-auto p-4">
-        
-        <section id="page-ads" class="page active">
-            <div class="hero-banner p-10 mb-8 text-center">
-                <p id="txt-hero" class="text-lg font-bold leading-relaxed">پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی</p>
-            </div>
-            <h2 id="txt-recent-ads" class="font-bold mb-4">آگهی‌های اخیر</h2>
-            <div id="adsList" class="grid gap-4">
-                <p class="text-center text-gray-500 py-10">در حال دریافت اطلاعات...</p>
-            </div>
-        </section>
+<!-- امکانات اصلی -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h2 class="text-xl font-bold mb-4">امکانات و قابلیت‌ها</h2>
+<ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+<li>ثبت و مشاهده آگهی در دسته‌بندی‌های مختلف (کالا، خدمات، شغل، پزشکی، گردشگری، زیارتی)</li>
+<li>پشتیبانی کامل از دو زبان فارسی و عربی با تشخیص خودکار زبان</li>
+<li>چت دوطرفه کاربران با قابلیت ترجمه خودکار پیام‌ها</li>
+<li>امکان تماس، چت و ذخیره آگهی (بر اساس سطح کاربری)</li>
+<li>ثبت آگهی عادی و آگهی ویژه با زمان‌بندی (۱، ۳ و ۷ روزه)</li>
+<li>تأیید دستی آگهی‌ها و کاربران توسط مدیر جهت افزایش امنیت</li>
+<li>سیستم احراز هویت کاربران و حساب‌های تأییدشده</li>
+<li>نمایش آگهی‌ها بر اساس زمان، موقعیت و سطح کاربر</li>
+</ul>
+</section>
 
-        <section id="page-chats" class="page">
-            <h2 class="text-2xl font-bold mb-4">گفتگوها</h2>
-            <div class="glass rounded-[30px] h-[60vh] flex flex-col overflow-hidden">
-                <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-3"></div>
-                <div class="p-4 bg-white/5 flex gap-2">
-                    <input type="text" id="msgInput" placeholder="تایپ پیام..." class="bg-transparent flex-1 outline-none text-sm">
-                    <button onclick="send()" class="text-yellow-500"><i class="fas fa-paper-plane text-xl"></i></button>
-                </div>
-            </div>
-        </section>
+<!-- سطوح کاربری -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h2 class="text-xl font-bold mb-4">سطوح کاربران</h2>
+<ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+<li>سطح عادی: محدودیت در تعداد آگهی، پیام، تماس و ذخیره آگهی</li>
+<li>سطوح ویژه (۱، ۳، ۶ و ۱۲ ماهه): دسترسی کامل به چت، تماس و تبلیغ</li>
+<li>امکان ارتقا سطح کاربری در هر زمان</li>
+</ul>
+</section>
 
-        <section id="page-support" class="page">
-            <h2 class="text-2xl font-bold mb-6">پشتیبانی هوشمند</h2>
-            <div class="glass rounded-[30px] p-6 space-y-4">
-                <div id="aiBox" class="bg-blue-600/10 p-4 rounded-2xl min-h-[100px] text-sm leading-relaxed">
-                    سلام مهدی عزیز، چطور می‌توانم کمکت کنم؟
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="aiInput" placeholder="سوال شما..." class="bg-white/5 flex-1 p-3 rounded-xl outline-none text-sm">
-                    <button onclick="askAI()" class="bg-blue-600 px-4 rounded-xl text-xs font-bold">بپرس</button>
-                </div>
-            </div>
-        </section>
+<!-- پرداخت و مالی -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h2 class="text-xl font-bold mb-4">پرداخت و امور مالی</h2>
+<ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+<li>پرداخت محلی (نقدی، حواله)</li>
+<li>پشتیبانی از پرداخت آنلاین</li>
+<li>امکان شارژ حساب با ارز دیجیتال و معادل ریالی</li>
+<li>مدیریت و تأیید پرداخت‌ها توسط مدیر سیستم</li>
+</ul>
+</section>
 
-        <section id="page-profile" class="page">
-            <h2 class="text-2xl font-bold mb-6">حساب کاربری</h2>
-            <div class="glass rounded-[30px] p-8 text-center space-y-4">
-                <div class="w-24 h-24 bg-yellow-500/20 rounded-full mx-auto flex items-center justify-center border-4 border-yellow-500 shadow-xl shadow-yellow-500/10">
-                    <i class="fas fa-user-shield text-4xl text-yellow-500"></i>
-                </div>
-                <div>
-                    <p id="userDisplayId" class="font-bold text-xl">کاربر تایید شده</p>
-                    <p class="text-xs text-yellow-500 mt-1 italic">وضعیت اشتراک: VIP فعال</p>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-6">
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[10px] text-gray-400">آگهی‌های من</p>
-                        <p class="font-bold">۱۲</p>
-                    </div>
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[10px] text-gray-400">بازدید کل</p>
-                        <p class="font-bold">۱.۴K</p>
-                    </div>
-                </div>
-                <button onclick="location.reload()" class="w-full bg-red-500/10 text-red-500 py-4 rounded-2xl font-bold text-sm mt-4">خروج از حساب</button>
-            </div>
-        </section>
+<!-- هوش مصنوعی و پشتیبانی -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h2 class="text-xl font-bold mb-4">پشتیبانی و هوش مصنوعی</h2>
+<ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+<li>دستیار هوشمند برای راهنمایی کاربران</li>
+<li>پشتیبانی آنلاین دو زبانه</li>
+<li>سیستم تیکت و پاسخ‌گویی مدیر</li>
+<li>پیشنهاد هوشمند برای بهبود و نمایش آگهی‌ها</li>
+</ul>
+</section>
 
-    </main>
+<!-- امنیت و مدیریت -->
+<section class="bg-slate-800 p-6 rounded-2xl">
+<h2 class="text-xl font-bold mb-4">امنیت و مدیریت</h2>
+<ul class="space-y-2 text-sm text-slate-300 list-disc list-inside">
+<li>امنیت بالا و محافظت از اطلاعات کاربران</li>
+<li>پنل مدیریت کامل برای تأیید کاربران و آگهی‌ها</li>
+<li>امکان ویرایش و حذف آگهی توسط کاربران</li>
+<li>پشتیبانی تماس (تلفن، ایمیل، واتساپ، تلگرام)</li>
+</ul>
+</section>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 px-6 py-4 flex justify-between items-center z-[60] rounded-t-[35px]">
-        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 nav-active">
-            <i class="fas fa-home text-xl"></i>
-            <span class="text-[9px] font-bold">خانه</span>
-        </button>
-        <button onclick="switchPage('chats', this)" class="flex flex-col items-center gap-1 text-gray-400">
-            <i class="fas fa-comment-dots text-xl"></i>
-            <span class="text-[9px] font-bold">چت</span>
-        </button>
-        <button onclick="switchPage('support', this)" class="flex flex-col items-center gap-1 text-gray-400">
-            <i class="fas fa-robot text-xl"></i>
-            <span class="text-[9px] font-bold">دستیار</span>
-        </button>
-        <button onclick="switchPage('profile', this)" class="flex flex-col items-center gap-1 text-gray-400">
-            <i class="fas fa-user-circle text-xl"></i>
-            <span class="text-[9px] font-bold">پروفایل</span>
-        </button>
-    </nav>
-
-    <script type="module">
-        import { db, ref, onValue, push, autoTranslate } from "./app.js";
-
-        // --- مدیریت احراز هویت ---
-        window.handleAuth = () => {
-            const id = document.getElementById('auth-id').value;
-            const pass = document.getElementById('auth-pass').value;
-            if(id.length > 5 && pass.length > 5) {
-                document.getElementById('auth-overlay').style.display = 'none';
-                document.getElementById('userDisplayId').innerText = id;
-            } else {
-                alert("لطفا ایمیل/تلفن و رمز عبور معتبر (حداقل ۶ کاراکتر) وارد کنید.");
-            }
-        };
-
-        // --- تغییر صفحه ---
-        window.switchPage = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            if(el) {
-                document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active', 'text-gray-400'));
-                document.querySelectorAll('nav button').forEach(b => b.classList.add('text-gray-400'));
-                el.classList.add('nav-active');
-            }
-        };
-
-        // --- هوش مصنوعی ---
-        window.askAI = () => {
-            const input = document.getElementById('aiInput');
-            const box = document.getElementById('aiBox');
-            if(!input.value) return;
-            box.innerText = "در حال تحلیل سوال شما...";
-            setTimeout(() => {
-                box.innerText = "مهدی عزیز، درخواست شما بررسی شد. برای ارتباط با بازارهای عربی، پیشنهاد می‌شود آگهی خود را به زبان عربی نیز منتشر کنید.";
-                input.value = '';
-            }, 1000);
-        };
-
-        // دریافت آگهی‌ها
-        onValue(ref(db, 'ads'), (snap) => {
-            const list = document.getElementById('adsList');
-            list.innerHTML = '';
-            const data = snap.val();
-            if(!data) return;
-            Object.keys(data).forEach(id => {
-                if(data[id].status === 'approved') {
-                    list.innerHTML += `
-                        <div class="glass p-4 rounded-3xl flex gap-4 items-center">
-                            <img src="${data[id].imageUrl || 'https://via.placeholder.com/150'}" class="w-20 h-20 rounded-2xl object-cover">
-                            <div class="flex-1">
-                                <h3 class="font-bold text-sm">${data[id].title}</h3>
-                                <p class="text-yellow-500 font-bold text-xs mt-1">${Number(data[id].price).toLocaleString()} تومان</p>
-                            </div>
-                            <button onclick="switchPage('chats')" class="bg-white/5 p-2 rounded-xl"><i class="fas fa-envelope text-blue-400"></i></button>
-                        </div>`;
-                }
-            });
-        });
-    </script>
+</main>
 </body>
 </html>
