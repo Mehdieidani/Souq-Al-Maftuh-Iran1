@@ -1,87 +1,232 @@
-<style>
-    /* ... استایل‌های قبلی ... */
-    
-    /* افکت پیشرفته برای بخش قرمز (شعار) */
-    .hero-banner {
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
-        border: 1px solid rgba(251, 191, 36, 0.3);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        backdrop-filter: blur(8px);
-        border-radius: 24px;
-        position: relative;
-        overflow: hidden;
-    }
-    .hero-banner::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
-        animation: rotate 10s linear infinite;
-    }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    /* استایل دکمه زرد (مشاهده همه) */
-    .view-all-btn {
-        color: #fbbf24;
-        transition: all 0.3s ease;
-        padding: 5px 12px;
-        border-radius: 12px;
-    }
-    .view-all-btn:active {
-        background: rgba(251, 191, 36, 0.2);
-        transform: scale(0.95);
-    }
-</style>
-
-<div class="hero-banner p-8 mb-8 text-center relative z-10">
-    <p id="txt-hero" class="text-xl font-extrabold leading-relaxed bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
-        پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی
-    </p>
-    <div class="mt-2 text-[10px] text-yellow-500/50 uppercase tracking-widest">Bridging Markets • Connecting People</div>
-</div>
-
-<div class="flex justify-between items-center mb-6">
-    <h2 id="txt-recent-ads" class="text-lg font-bold">آگهی‌های اخیر</h2>
-    <button onclick="switchPage('chats', document.querySelectorAll('nav button')[1])" class="view-all-btn text-sm font-bold">
-        <i class="fas fa-comments ml-1"></i> مشاهده همه گفتگوها
-    </button>
-</div>
-
-<script type="module">
-    import { db, ref, onValue, push, autoTranslate } from "./app.js";
-
-    // --- پشتیبانی هوشمند پیشرفته ---
-    window.askAI = async () => {
-        const input = document.getElementById('supportInput');
-        const botBox = document.getElementById('aiChatBox');
-        const userText = input.value.trim();
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>السوق المفتوح پلاس | ایران</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap');
         
-        if(!userText) return;
+        body { font-family: 'Vazirmatn', 'Noto Kufi Arabic', sans-serif; transition: all 0.4s ease; }
+        
+        /* تم تاریک حرفه‌ای */
+        .dark-mode { background-color: #020617; color: #f8fafc; }
+        .dark-mode .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* تم روشن */
+        .light-mode { background-color: #f1f5f9; color: #0f172a; }
+        .light-mode .glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.1); }
 
-        // اضافه کردن پیام کاربر به صفحه
-        botBox.innerHTML += `<div class="bg-blue-500/20 p-3 rounded-2xl self-start mb-2 text-sm">👤 شما: ${userText}</div>`;
-        input.value = '';
+        /* شعار متحرک و باکلاس (بخش قرمز سابق) */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 10px 40px -10px rgba(251, 191, 36, 0.3);
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(251,191,36,0.1), transparent);
+            animation: rotate 12s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        // شبیه‌سازی تفکر هوش مصنوعی
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = "text-xs text-gray-500 animate-pulse mb-2";
-        loadingDiv.innerText = "در حال پاسخگویی...";
-        botBox.appendChild(loadingDiv);
+        .page { display: none; animation: slideUp 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        // منطق پاسخگویی هوشمند (بومی‌سازی شده برای پلتفرم شما)
-        setTimeout(() => {
-            loadingDiv.remove();
-            let response = "متاسفانه متوجه نشدم. لطفا با شماره پشتیبانی تماس بگیرید.";
+        .nav-active { color: #fbbf24 !important; transform: translateY(-5px); transition: 0.3s; }
+        .chat-me { background: #2563eb; color: white; border-radius: 18px 18px 0 18px; align-self: flex-start; }
+        .chat-other { background: #334155; color: white; border-radius: 18px 18px 18px 0; align-self: flex-end; }
+    </style>
+</head>
+<body class="dark-mode pb-24">
+
+    <header class="glass sticky top-0 z-50 p-4 flex justify-between items-center backdrop-blur-xl">
+        <div class="flex gap-3">
+            <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 shadow-inner">
+                <i id="themeIcon" class="fas fa-sun text-yellow-400"></i>
+            </button>
+            <select onchange="changeLang(this.value)" class="bg-white/5 border-none text-[10px] font-bold rounded-xl px-2 outline-none cursor-pointer">
+                <option value="fa">فارسی</option>
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        <h1 class="text-xl font-black bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">السوق المفتوح+</h1>
+    </header>
+
+    <main class="max-w-md mx-auto p-4">
+        
+        <section id="page-ads" class="page active">
+            <div class="hero-banner p-10 mb-8 text-center relative z-10">
+                <p id="txt-hero" class="text-xl font-bold leading-relaxed text-white drop-shadow-lg">
+                    پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی
+                </p>
+                <div class="mt-4 h-1 w-20 bg-yellow-500 mx-auto rounded-full"></div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="txt-recent-ads" class="font-bold text-lg">آگهی‌های اخیر</h2>
+                <button onclick="switchPage('chats', document.querySelectorAll('nav button')[1])" class="text-yellow-500 font-bold text-sm bg-yellow-500/10 px-4 py-2 rounded-xl">
+                    <i class="fas fa-comments ml-1"></i> مشاهده همه
+                </button>
+            </div>
             
-            if(userText.includes("سلام")) response = "سلام مهدی عزیز! چطور می‌توانم در مدیریت پلتفرم السوق المفتوح به شما کمک کنم؟";
-            if(userText.includes("اشتراک") || userText.includes("VIP")) response = "برای فعالسازی اشتراک VIP، کاربران باید مبلغ را واریز و رسید را برای شما ارسال کنند. شما از پنل Admin می‌توانید آن‌ها را تایید کنید.";
-            if(userText.includes("عربی")) response = "این پلتفرم از زبان عربی پشتیبانی می‌کند و ترجمه خودکار چت‌ها برای ارتباط با تجار عرب فعال است.";
+            <div id="adsList" class="grid gap-4">
+                <div class="animate-pulse text-center py-10 text-gray-500 italic">در حال بارگذاری آگهی‌ها...</div>
+            </div>
+        </section>
 
-            botBox.innerHTML += `<div class="glass p-3 rounded-2xl self-end mb-2 text-sm border-l-4 border-yellow-500">🤖 دستیار: ${response}</div>`;
-            botBox.scrollTop = botBox.scrollHeight;
-        }, 1500);
-    };
-</script>
+        <section id="page-chats" class="page">
+            <h2 id="txt-chats-title" class="text-2xl font-bold mb-4">گفتگوها</h2>
+            <div id="chatInterface" class="glass rounded-[35px] h-[65vh] flex flex-col overflow-hidden shadow-2xl">
+                <div id="chatMessages" class="flex-1 p-5 overflow-y-auto flex flex-col gap-4">
+                    <p class="text-center text-[10px] text-gray-500 opacity-70">پیام‌ها به صورت خودکار ترجمه می‌شوند.</p>
+                </div>
+                <div class="p-4 bg-white/5 backdrop-blur-md flex gap-2">
+                    <input type="text" id="msgInput" placeholder="پیام شما..." class="bg-transparent flex-1 outline-none text-sm">
+                    <button onclick="sendMsg()" class="bg-yellow-500 text-black w-10 h-10 rounded-full shadow-lg transition active:scale-90">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-support" class="page">
+            <h2 id="txt-support-title" class="text-2xl font-bold mb-6">پشتیبانی هوشمند</h2>
+            <div class="glass rounded-[30px] p-6 space-y-6">
+                <div id="aiResponse" class="bg-blue-600/10 p-4 rounded-2xl border border-blue-500/20 text-sm min-h-[100px]">
+                    <p class="text-blue-400 font-bold mb-2">🤖 دستیار هوشمند:</p>
+                    <p id="aiContent">سلام! چطور می‌توانم در مورد آگهی‌ها یا اشتراک VIP کمکتان کنم؟</p>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="aiInput" placeholder="سوال خود را بپرسید..." class="bg-white/5 flex-1 p-3 rounded-xl text-sm outline-none">
+                    <button onclick="askAI()" class="bg-blue-600 px-4 rounded-xl font-bold text-xs">بپرس</button>
+                </div>
+                <hr class="border-white/5">
+                <div class="space-y-3">
+                    <a href="tel:+989332356547" class="flex justify-between items-center p-4 bg-white/5 rounded-2xl">
+                        <span class="font-bold">+98 933 235 6547</span>
+                        <i class="fas fa-phone-alt text-green-500"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 px-6 py-4 flex justify-between items-center z-50 rounded-t-[40px] shadow-2xl">
+        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 nav-active">
+            <i class="fas fa-house-chimney text-xl"></i>
+            <span class="text-[9px] font-bold">Home</span>
+        </button>
+        <button onclick="switchPage('chats', this)" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-message text-xl"></i>
+            <span class="text-[9px] font-bold">Chat</span>
+        </button>
+        <button onclick="switchPage('support', this)" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-robot text-xl"></i>
+            <span class="text-[9px] font-bold">AI Support</span>
+        </button>
+        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-circle-user text-xl"></i>
+            <span class="text-[9px] font-bold">Profile</span>
+        </button>
+    </nav>
+
+    <script type="module">
+        import { db, ref, onValue, push, autoTranslate } from "./app.js";
+
+        // --- سیستم تغییر زبان ---
+        const langData = {
+            fa: { hero: "پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی", recent: "آگهی‌های اخیر", chats: "گفتگوها", support: "پشتیبانی هوشمند" },
+            ar: { hero: "منصة السوق المفتوح هي جسر التواصل بين إيران والدول العربية", recent: "الإعلانات الأخيرة", chats: "المحادثات", support: "الدعم الذكي" },
+            en: { hero: "Souq Al-Maftuh: The bridge between Iran and Arab countries", recent: "Recent Ads", chats: "Chats", support: "AI Support" }
+        };
+
+        window.changeLang = (lang) => {
+            const d = langData[lang];
+            document.getElementById('txt-hero').innerText = d.hero;
+            document.getElementById('txt-recent-ads').innerText = d.recent;
+            document.getElementById('txt-chats-title').innerText = d.chats;
+            document.getElementById('txt-support-title').innerText = d.support;
+            document.dir = (lang === 'en') ? 'ltr' : 'rtl';
+        };
+
+        // --- هوش مصنوعی (پشتیبانی هوشمند) ---
+        window.askAI = () => {
+            const q = document.getElementById('aiInput').value;
+            const res = document.getElementById('aiContent');
+            if(!q) return;
+            res.innerText = "در حال فکر کردن...";
+            setTimeout(() => {
+                if(q.includes("سلام")) res.innerText = "سلام مهدی عزیز! خوش آمدی. چطور می‌توانم کمکت کنم؟";
+                else if(q.includes("اشتراک")) res.innerText = "برای خرید اشتراک VIP، به شماره کارت مهدی عیدانی واریز کنید و رسید را بفرستید.";
+                else res.innerText = "پیام شما دریافت شد. به زودی مدیر (مهدی عیدانی) با شما تماس می‌گیرد.";
+                document.getElementById('aiInput').value = '';
+            }, 1000);
+        };
+
+        // --- ارسال پیام در چت ---
+        window.sendMsg = async () => {
+            const input = document.getElementById('msgInput');
+            const box = document.getElementById('chatMessages');
+            if(!input.value) return;
+
+            const original = input.value;
+            const translated = await autoTranslate(original, 'en');
+            
+            const div = document.createElement('div');
+            div.className = "p-4 chat-me shadow-lg max-w-[80%]";
+            div.innerHTML = `<p class="text-sm font-bold">${original}</p><p class="text-[10px] opacity-60 italic mt-1">${translated}</p>`;
+            box.appendChild(div);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        };
+
+        // --- توابع عمومی ---
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('themeIcon');
+            icon.classList.toggle('fa-sun');
+            icon.classList.toggle('fa-moon');
+        };
+
+        window.switchPage = (id, el) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-yellow-500', 'text-gray-500'));
+            if(el) el.classList.add('nav-active');
+        };
+
+        // دریافت آگهی‌ها
+        onValue(ref(db, 'ads'), (snap) => {
+            const list = document.getElementById('adsList');
+            list.innerHTML = '';
+            const data = snap.val();
+            if(!data) return;
+            Object.keys(data).forEach(id => {
+                if(data[id].status === 'approved') {
+                    list.innerHTML += `
+                        <div class="glass p-4 rounded-[25px] flex gap-4 items-center hover:scale-[1.02] transition">
+                            <img src="${data[id].imageUrl || 'https://via.placeholder.com/150'}" class="w-20 h-20 rounded-2xl object-cover shadow-lg">
+                            <div class="flex-1">
+                                <h3 class="font-bold text-sm">${data[id].title}</h3>
+                                <p class="text-yellow-500 font-bold text-xs mt-1">${Number(data[id].price).toLocaleString()} تومان</p>
+                            </div>
+                            <i class="fas fa-chevron-left opacity-30 text-xs"></i>
+                        </div>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
