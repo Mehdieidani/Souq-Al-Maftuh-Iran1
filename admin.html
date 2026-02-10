@@ -1,66 +1,19 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت | السوق المفتوح</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-        body { font-family: 'Vazirmatn', sans-serif; }
-    </style>
-</head>
-<body class="bg-gray-900 text-white min-h-screen">
+from django.contrib import admin
+from .models import Ad, Profile, Message
 
-    <nav class="bg-blue-900 p-4 shadow-xl">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="font-bold text-2xl">پنل مدیریت <span class="text-red-400">السوق المفتوح</span></h1>
-            <span class="text-sm text-gray-300">مدیر: مهدی عیدانی</span>
-        </div>
-    </nav>
+@admin.register(Ad)
+class AdAdmin(admin.ModelAdmin):
+    list_display = ("title", "user", "is_approved", "created_at")
+    list_filter = ("is_approved",)
+    actions = ["approve_ads"]
 
-    <main class="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 py-10">
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-yellow-400 border-b border-gray-700 pb-3">آگهی‌های در انتظار تایید (جدید)</h2>
-            <div id="pendingAdsList" class="space-y-4">
-                <p class="text-gray-500 text-center">هیچ آگهی در انتظار تاییدی موجود نیست.</p>
-            </div>
-        </div>
+    def approve_ads(self, request, queryset):
+        queryset.update(is_approved=True)
 
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-green-400 border-b border-gray-700 pb-3">تایید کاربران ویژه (پرداخت اشتراک)</h2>
-            <div id="pendingUsersList" class="space-y-4">
-                <p class="text-gray-500 text-center">هیچ کاربری در انتظار تایید VIP نیست.</p>
-            </div>
-        </div>
-    </main>
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "is_vip")
 
-    <script type="module">
-        import { db, ref, onValue, update, remove, get } from "./app.js";
-
-        // === Manage Pending Ads ===
-        onValue(ref(db, 'ads'), (snapshot) => {
-            const list = document.getElementById('pendingAdsList');
-            list.innerHTML = '';
-            const adsData = snapshot.val();
-            let hasPendingAds = false;
-
-            for (let id in adsData) {
-                const ad = adsData[id];
-                if (ad.status === 'pending') {
-                    hasPendingAds = true;
-                    const adElement = document.createElement('div');
-                    adElement.className = 'bg-gray-700 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center shadow';
-                    adElement.innerHTML = `
-                        <div class="flex-grow mb-3 sm:mb-0">
-                            <p class="font-bold text-lg text-white">${ad.title}</p>
-                            <p class="text-sm text-gray-300">قیمت: ${Number(ad.price).toLocaleString()} تومان</p>
-                            <p class="text-xs text-gray-400">شناسه کاربر: ${ad.ownerId}</p>
-                            ${ad.imageUrl ? `<img src="${ad.imageUrl}" class="w-20 h-20 object-cover rounded mt-2" alt="آگهی">` : ''}
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="approveAd('${id}', '${ad.type}')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
-                                <i class="fas fa-check ml-1"></i>تایید
-                            </button>
-                            <button onclick="rejectAd('${id}')" class="bg-red-60
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ("sender", "ad", "created")
