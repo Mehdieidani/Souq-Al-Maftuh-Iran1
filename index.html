@@ -1,211 +1,87 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>السوق المفتوح پلاس | ایران</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap');
-        body { font-family: 'Vazirmatn', 'Noto Kufi+Arabic', sans-serif; transition: all 0.3s ease; }
-        .dark-mode { background-color: #0f172a; color: #f1f5f9; }
-        .light-mode { background-color: #f8fafc; color: #1e293b; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .light-mode .glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.1); }
-        .page { display: none; animation: slideUp 0.4s ease-out; }
-        .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .nav-active { color: #fbbf24 !important; }
-        .hero-gradient { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    </style>
-</head>
-<body class="dark-mode pb-24">
+<style>
+    /* ... استایل‌های قبلی ... */
+    
+    /* افکت پیشرفته برای بخش قرمز (شعار) */
+    .hero-banner {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        backdrop-filter: blur(8px);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-banner::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+        animation: rotate 10s linear infinite;
+    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    <header class="glass sticky top-0 z-50 p-4 flex justify-between items-center">
-        <div class="flex gap-2">
-            <button onclick="toggleTheme()" class="w-10 h-10 rounded-full flex items-center justify-center bg-white/5">
-                <i id="themeIcon" class="fas fa-sun text-yellow-400"></i>
-            </button>
-            <select onchange="changeLang(this.value)" class="bg-white/5 border-none text-xs rounded-full px-2 outline-none">
-                <option value="fa">فارسی</option>
-                <option value="ar">العربية</option>
-                <option value="en">English</option>
-            </select>
-        </div>
-        <h1 class="text-xl font-bold hero-gradient">السوق المفتوح+</h1>
-    </header>
+    /* استایل دکمه زرد (مشاهده همه) */
+    .view-all-btn {
+        color: #fbbf24;
+        transition: all 0.3s ease;
+        padding: 5px 12px;
+        border-radius: 12px;
+    }
+    .view-all-btn:active {
+        background: rgba(251, 191, 36, 0.2);
+        transform: scale(0.95);
+    }
+</style>
 
-    <main class="max-w-md mx-auto p-4">
+<div class="hero-banner p-8 mb-8 text-center relative z-10">
+    <p id="txt-hero" class="text-xl font-extrabold leading-relaxed bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
+        پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی
+    </p>
+    <div class="mt-2 text-[10px] text-yellow-500/50 uppercase tracking-widest">Bridging Markets • Connecting People</div>
+</div>
+
+<div class="flex justify-between items-center mb-6">
+    <h2 id="txt-recent-ads" class="text-lg font-bold">آگهی‌های اخیر</h2>
+    <button onclick="switchPage('chats', document.querySelectorAll('nav button')[1])" class="view-all-btn text-sm font-bold">
+        <i class="fas fa-comments ml-1"></i> مشاهده همه گفتگوها
+    </button>
+</div>
+
+<script type="module">
+    import { db, ref, onValue, push, autoTranslate } from "./app.js";
+
+    // --- پشتیبانی هوشمند پیشرفته ---
+    window.askAI = async () => {
+        const input = document.getElementById('supportInput');
+        const botBox = document.getElementById('aiChatBox');
+        const userText = input.value.trim();
         
-        <section id="page-ads" class="page active">
-            <div class="text-center py-6 px-4 mb-6 rounded-3xl bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/20">
-                <p id="txt-hero" class="text-lg font-bold leading-relaxed">
-                    پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی
-                </p>
-            </div>
+        if(!userText) return;
 
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="txt-recent-ads" class="font-bold">آگهی‌های اخیر</h2>
-                <button onclick="switchPage('chats')" class="text-xs text-blue-400">مشاهده همه</button>
-            </div>
+        // اضافه کردن پیام کاربر به صفحه
+        botBox.innerHTML += `<div class="bg-blue-500/20 p-3 rounded-2xl self-start mb-2 text-sm">👤 شما: ${userText}</div>`;
+        input.value = '';
+
+        // شبیه‌سازی تفکر هوش مصنوعی
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = "text-xs text-gray-500 animate-pulse mb-2";
+        loadingDiv.innerText = "در حال پاسخگویی...";
+        botBox.appendChild(loadingDiv);
+
+        // منطق پاسخگویی هوشمند (بومی‌سازی شده برای پلتفرم شما)
+        setTimeout(() => {
+            loadingDiv.remove();
+            let response = "متاسفانه متوجه نشدم. لطفا با شماره پشتیبانی تماس بگیرید.";
             
-            <div id="adsList" class="grid gap-4">
-                <div class="animate-pulse text-center py-10 text-gray-500 italic">در حال بارگذاری...</div>
-            </div>
-        </section>
+            if(userText.includes("سلام")) response = "سلام مهدی عزیز! چطور می‌توانم در مدیریت پلتفرم السوق المفتوح به شما کمک کنم؟";
+            if(userText.includes("اشتراک") || userText.includes("VIP")) response = "برای فعالسازی اشتراک VIP، کاربران باید مبلغ را واریز و رسید را برای شما ارسال کنند. شما از پنل Admin می‌توانید آن‌ها را تایید کنید.";
+            if(userText.includes("عربی")) response = "این پلتفرم از زبان عربی پشتیبانی می‌کند و ترجمه خودکار چت‌ها برای ارتباط با تجار عرب فعال است.";
 
-        <section id="page-chats" class="page">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="txt-chats-title" class="text-xl font-bold">گفتگوهای فعال</h2>
-                <button class="bg-blue-600 text-white p-2 rounded-full text-xs"><i class="fas fa-plus"></i></button>
-            </div>
-            <div id="chatBox" class="glass rounded-3xl h-[65vh] flex flex-col">
-                <div id="messages" class="flex-1 p-4 overflow-y-auto space-y-3">
-                    <p class="text-center text-[10px] text-gray-500">ترجمه خودکار برای تمامی زبان‌ها فعال است.</p>
-                </div>
-                <div class="p-4 border-t border-white/5 flex gap-2">
-                    <input type="text" id="msgInput" placeholder="..." class="bg-transparent flex-1 outline-none">
-                    <button onclick="send()" class="text-yellow-500"><i class="fas fa-paper-plane text-xl"></i></button>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-support" class="page">
-            <h2 id="txt-support-title" class="text-xl font-bold mb-6">مرکز پشتیبانی</h2>
-            <div class="glass rounded-3xl p-6 space-y-6">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-blue-500/20 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-2 text-2xl">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <p class="font-bold">پشتیبانی هوشمند</p>
-                </div>
-                <div class="space-y-4">
-                    <a href="tel:+989332356547" class="flex justify-between items-center p-4 bg-white/5 rounded-2xl">
-                        <span>+98 933 235 6547</span>
-                        <i class="fas fa-phone text-green-500"></i>
-                    </a>
-                    <a href="mailto:mehdi1eidani@gmail.com" class="flex justify-between items-center p-4 bg-white/5 rounded-2xl text-sm">
-                        <span>mehdi1eidani@gmail.com</span>
-                        <i class="fas fa-envelope text-red-500"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 px-6 py-4 flex justify-between items-center z-50 rounded-t-[35px]">
-        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 nav-active">
-            <i class="fas fa-home text-xl"></i>
-            <span class="text-[9px]">Home</span>
-        </button>
-        <button onclick="switchPage('chats', this)" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-comment-alt text-xl"></i>
-            <span class="text-[9px]">Chat</span>
-        </button>
-        <button onclick="switchPage('support', this)" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-headset text-xl"></i>
-            <span class="text-[9px]">Support</span>
-        </button>
-        <button onclick="switchPage('ads', this)" class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-user text-xl"></i>
-            <span class="text-[9px]">Profile</span>
-        </button>
-    </nav>
-
-    <script type="module">
-        import { db, ref, onValue, autoTranslate } from "./app.js";
-
-        // --- ترجمه محتوای ثابت ---
-        const translations = {
-            fa: {
-                hero: "پلتفرم السوق المفتوح پل ارتباطی بین ایران و کشورهای عربی",
-                recent: "آگهی‌های اخیر",
-                chats: "گفتگوهای فعال",
-                support: "مرکز پشتیبانی"
-            },
-            ar: {
-                hero: "منصة السوق المفتوح هي جسر التواصل بين إيران والدول العربية",
-                recent: "الإعلانات الأخيرة",
-                chats: "المحادثات النشطة",
-                support: "مركز الدعم"
-            },
-            en: {
-                hero: "Souq Al-Maftuh platform is the communication bridge between Iran and Arab countries",
-                recent: "Recent Ads",
-                chats: "Active Chats",
-                support: "Support Center"
-            }
-        };
-
-        window.changeLang = (lang) => {
-            const t = translations[lang];
-            document.getElementById('txt-hero').innerText = t.hero;
-            document.getElementById('txt-recent-ads').innerText = t.recent;
-            document.getElementById('txt-chats-title').innerText = t.chats;
-            document.getElementById('txt-support-title').innerText = t.support;
-            document.dir = (lang === 'en') ? 'ltr' : 'rtl';
-        };
-
-        // --- توابع رابط کاربری ---
-        window.toggleTheme = () => {
-            const body = document.body;
-            const icon = document.getElementById('themeIcon');
-            if(body.classList.contains('dark-mode')) {
-                body.classList.replace('dark-mode', 'light-mode');
-                icon.className = "fas fa-moon text-blue-500";
-            } else {
-                body.classList.replace('light-mode', 'dark-mode');
-                icon.className = "fas fa-sun text-yellow-400";
-            }
-        };
-
-        window.switchPage = (id, el) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            if(el) {
-                document.querySelectorAll('nav button').forEach(b => b.classList.add('text-gray-500'));
-                el.classList.remove('text-gray-500');
-                el.classList.add('nav-active');
-            }
-        };
-
-        // --- دریافت آگهی‌ها ---
-        onValue(ref(db, 'ads'), (snap) => {
-            const list = document.getElementById('adsList');
-            list.innerHTML = '';
-            const data = snap.val();
-            if(!data) return;
-            Object.keys(data).forEach(id => {
-                if(data[id].status === 'approved') {
-                    list.innerHTML += `
-                        <div class="glass p-3 rounded-3xl flex gap-4 items-center">
-                            <img src="${data[id].imageUrl || 'https://via.placeholder.com/150'}" class="w-24 h-24 rounded-2xl object-cover">
-                            <div class="flex-1">
-                                <h3 class="font-bold text-sm line-clamp-1">${data[id].title}</h3>
-                                <p class="text-yellow-500 font-bold text-sm mt-1">${Number(data[id].price).toLocaleString()} T</p>
-                                <button onclick="switchPage('chats')" class="mt-2 text-[10px] bg-blue-500/20 text-blue-400 px-4 py-1 rounded-full font-bold">ارسال پیام</button>
-                            </div>
-                        </div>`;
-                }
-            });
-        });
-
-        // --- ارسال پیام در چت ---
-        window.send = async () => {
-            const input = document.getElementById('msgInput');
-            if(!input.value) return;
-            const box = document.getElementById('messages');
-            const msg = input.value;
-            input.value = '';
-            
-            const div = document.createElement('div');
-            div.className = "bg-blue-600 text-white p-3 rounded-2xl rounded-br-none ml-auto max-w-[80%] text-sm";
-            div.innerHTML = `<p>${msg}</p>`;
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-        };
-    </script>
-</body>
-</html>
+            botBox.innerHTML += `<div class="glass p-3 rounded-2xl self-end mb-2 text-sm border-l-4 border-yellow-500">🤖 دستیار: ${response}</div>`;
+            botBox.scrollTop = botBox.scrollHeight;
+        }, 1500);
+    };
+</script>
