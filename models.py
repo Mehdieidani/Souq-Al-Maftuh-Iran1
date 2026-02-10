@@ -1,15 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-class User(AbstractUser):
-    is_vip = models.BooleanField(default=False)
-    wallet_usdt = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+from django.contrib.auth.models import User
 
 class Ad(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    content = models.TextField()
-    price = models.BigIntegerField()
-    currency = models.CharField(max_length=20, default='تومان')
-    is_approved = models.BooleanField(default=False) # تایید مدیر السوق المفتوح
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    price = models.CharField(max_length=50, blank=True)
+    image = models.URLField(blank=True)
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
